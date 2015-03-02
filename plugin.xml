@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  id="com.pbakondy.sim"
+  version="1.0.0">
+  <name>SIM</name>
+  <description>A plugin to get the device's SIM data (carrier name, mcc mnc, country code, telephonenumber, etc)</description>
+  <license>MIT</license>
+  <keywords>cordova,sim,carrier,mcc,mnc,telephonenumber</keywords>
+
+  <engines>
+    <engine name="cordova" version=">=3.0.0"/>
+  </engines>
+
+  <js-module src="www/sim.js" name="Sim">
+    <clobbers target="window.plugins.sim" />
+  </js-module>
+
+  <!-- android -->
+  <platform name="android">
+    <config-file target="res/xml/config.xml" parent="/*">
+      <feature name="Sim">
+        <param name="android-package" value="com.pbakondy.Sim"/>
+      </feature>
+    </config-file>
+
+    <!-- for method getLine1Number() -->
+    <config-file target="AndroidManifest.xml" parent="/*">
+      <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    </config-file>
+
+    <source-file src="src/android/com/pbakondy/Sim.java" target-dir="src/com/pbakondy" />
+  </platform>
+
+  <!-- ios -->
+  <platform name="ios">
+    <config-file target="config.xml" parent="/*">
+      <feature name="Sim">
+        <param name="ios-package" value="Sim" />
+      </feature>
+    </config-file>
+
+    <header-file src="src/ios/Sim.h"/>
+    <source-file src="src/ios/Sim.m"/>
+
+    <framework src="CoreTelephony.framework"/>
+  </platform>
+
+  <!-- wp7 -->
+  <platform name="wp7">
+    <config-file target="config.xml" parent="/*">
+      <feature name="Sim">
+        <param name="wp-package" value="Sim"/>
+      </feature>
+    </config-file>
+
+    <config-file target="Properties/WMAppManifest.xml" parent="/Deployment/App/Capabilities">
+        <Capability Name="ID_CAP_NETWORKING" />
+    </config-file>
+
+    <source-file src="src/wp/Sim.cs" />
+  </platform>
+
+  <!-- wp8 -->
+  <platform name="wp8">
+    <config-file target="config.xml" parent="/*">
+      <feature name="Sim">
+        <param name="wp-package" value="Sim"/>
+      </feature>
+    </config-file>
+
+    <config-file target="Properties/WMAppManifest.xml" parent="/Deployment/App/Capabilities">
+        <Capability Name="ID_CAP_NETWORKING" />
+    </config-file>
+
+    <source-file src="src/wp/Sim.cs" />
+  </platform>
+
+</plugin>
