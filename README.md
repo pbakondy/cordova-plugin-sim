@@ -8,9 +8,8 @@ This is a cordova plugin to get data from the SIM card like the carrier name, mc
 ## Installation
 
 ```
-cordova plugin add com.pbakondy.sim
+cordova plugin add cordova-plugin-sim
 ```
-
 
 ## Supported Platforms
 
