@@ -27,7 +27,8 @@
     "cordova-android",
     "cordova-ios",
     "cordova-wp7",
-    "cordova-wp8"
+    "cordova-wp8",
+    "cordova-windows"
   ],
   "engines": [
     {
