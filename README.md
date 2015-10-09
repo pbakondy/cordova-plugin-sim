@@ -20,7 +20,7 @@ cordova plugin add cordova-plugin-sim
 
 ## Usage
 
-```
+```js
 document.addEventListener("deviceready", onDeviceReady, false);
 
 function onDeviceReady() {
