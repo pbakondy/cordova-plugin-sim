@@ -26,6 +26,14 @@ document.addEventListener("deviceready", onDeviceReady, false);
 function onDeviceReady() {
   window.plugins.sim.getSimInfo(successCallback, errorCallback);
 }
+
+function successCallback(result) {
+  console.log(result);
+}
+
+function errorCallback(error) {
+  console.log(error);
+}
 ```
 
 The plugin returns a JSON object. Return values:
@@ -46,14 +54,20 @@ You can extract country and carrier data from MCC and MNC codes, read further on
 
 Additional return values:
 
-* `phoneNumber`: String - phone number string for line 1, for example, the [MSISDN](http://en.wikipedia.org/wiki/MSISDN) for a GSM phone
+* `phoneNumber`: String - phone number string for line 1, for example, the [MSISDN](http://en.wikipedia.org/wiki/MSISDN) for a GSM phone <sup>1</sup>
+* `deviceId`: String - the unique device ID, for example, the IMEI for GSM and the MEID or ESN for CDMA phones
+* `deviceSoftwareVersion`: String - the software version number for the device, for example, the IMEI/SV for GSM phones
+* `simSerialNumber`: String - the serial number of the SIM, if applicable
+* `subscriberId`: String - the unique subscriber ID, for example, the IMSI for a GSM phone
 * `callState`: Number - the call state (cellular) on the device
 * `dataActivity`: Number - the type of activity on a data connection (cellular)
 * `networkType`: Number - the NETWORK_TYPE_xxxx for current data connection
 * `phoneType`: Number - the device phone type. This indicates the type of radio used to transmit voice calls
 * `simState`: Number - the state of the device SIM card
+* `isNetworkRoaming`: Boolean - true if the device is considered roaming on the current network, for GSM purposes
 
-Notice: the content of phoneNumber is unreliable (see [this](http://stackoverflow.com/questions/7922734/getting-reliable-msisdn-from-android-phone-voicemailnumber-line1number) and [this](http://stackoverflow.com/questions/25861064/retrieving-line1-number-from-telephonymanager-in-android) article).
+<sup>1)</sup> Notice: the content of phoneNumber is unreliable (see [this](http://stackoverflow.com/questions/7922734/getting-reliable-msisdn-from-android-phone-voicemailnumber-line1number) and [this](http://stackoverflow.com/questions/25861064/retrieving-line1-number-from-telephonymanager-in-android) article).
+Sometimes phoneNumber value is only an empty string.
 
 
 ### List of Call State Codes and Meanings

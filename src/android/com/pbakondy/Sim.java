@@ -33,11 +33,18 @@ public class Sim extends CordovaPlugin {
       String simOperator = manager.getSimOperator();
       String carrierName = manager.getSimOperatorName();
 
+      String deviceId = manager.getDeviceId();
+      String deviceSoftwareVersion = manager.getDeviceSoftwareVersion();
+      String simSerialNumber = manager.getSimSerialNumber();
+      String subscriberId = manager.getSubscriberId();
+
       int callState = manager.getCallState();
       int dataActivity = manager.getDataActivity();
       int networkType = manager.getNetworkType();
       int phoneType = manager.getPhoneType();
       int simState = manager.getSimState();
+
+      boolean isNetworkRoaming = manager.isNetworkRoaming();
 
       String mcc = "";
       String mnc = "";
@@ -47,7 +54,6 @@ public class Sim extends CordovaPlugin {
         mnc = simOperator.substring(3);
       }
 
-
       JSONObject result = new JSONObject();
 
       result.put("carrierName", carrierName);
@@ -56,11 +62,18 @@ public class Sim extends CordovaPlugin {
       result.put("mnc", mnc);
       result.put("phoneNumber", phoneNumber);
 
+      result.put("deviceId", deviceId);
+      result.put("deviceSoftwareVersion", deviceSoftwareVersion);
+      result.put("simSerialNumber", simSerialNumber);
+      result.put("subscriberId", subscriberId);
+
       result.put("callState", callState);
       result.put("dataActivity", dataActivity);
       result.put("networkType", networkType);
       result.put("phoneType", phoneType);
       result.put("simState", simState);
+
+      result.put("isNetworkRoaming", isNetworkRoaming);
 
       callbackContext.success(result);
 
