@@ -69,6 +69,26 @@ Additional return values:
 <sup>1)</sup> Notice: the content of phoneNumber is unreliable (see [this](http://stackoverflow.com/questions/7922734/getting-reliable-msisdn-from-android-phone-voicemailnumber-line1number) and [this](http://stackoverflow.com/questions/25861064/retrieving-line1-number-from-telephonymanager-in-android) article).
 Sometimes phoneNumber value is only an empty string.
 
+### Android Emulator results
+
+```js
+{
+  "carrierName": "Android",
+  "countryCode": "us",
+  "mcc": "310",
+  "mnc": "260",
+  "phoneNumber": "15555215554",
+  "deviceId": "0000000000000000",
+  "simSerialNumber": "89014103211118510720",
+  "subscriberId": "310260000000000",
+  "callState": 0,
+  "dataActivity": 0,
+  "networkType": 3,
+  "phoneType": 1,
+  "simState": 5,
+  "isNetworkRoaming": false
+}
+```
 
 ### List of Call State Codes and Meanings
 
@@ -140,6 +160,17 @@ Additional return value:
 
 * `allowsVOIP`: Boolean - indicates if the carrier allows VoIP calls to be made on its network
 
+### iOS Emulator results
+
+```js
+{
+  "carrierName": "",
+  "countryCode": "",
+  "mcc": "",
+  "mnc": "",
+  "allowsVOIP": false
+}
+```
 
 ## Windows Phone Quirks
 
