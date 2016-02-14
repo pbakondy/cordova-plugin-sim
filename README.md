@@ -183,6 +183,8 @@ This plugin needs `READ_PHONE_STATE` permission for getting the following values
 * `subscriberId`
 
 
+Wiki: [How to test permissions](https://github.com/pbakondy/cordova-plugin-sim/wiki/Testing-Android-API-23-Permissions)
+
 ## iOS Quirks
 
 Additional return value:
