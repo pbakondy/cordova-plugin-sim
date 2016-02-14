@@ -1,7 +1,7 @@
 {
   "name": "cordova-plugin-sim",
-  "version": "1.1.0",
-  "description": "A plugin to get the device's SIM data (carrier name, mcc mnc, country code, telephonenumber, etc)",
+  "version": "1.2.0",
+  "description": "A plugin to get the device's SIM data (carrier name, mcc mnc, country code, telephonenumber, imei, etc)",
   "cordova": {
     "id": "cordova-plugin-sim",
     "platforms": [
@@ -24,6 +24,7 @@
     "mcc",
     "mnc",
     "telephonenumber",
+    "imei",
     "ecosystem:cordova",
     "cordova-android",
     "cordova-ios",

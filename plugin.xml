@@ -2,9 +2,9 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
   xmlns:android="http://schemas.android.com/apk/res/android"
   id="cordova-plugin-sim"
-  version="1.1.0">
+  version="1.2.0">
   <name>SIM</name>
-  <description>A plugin to get the device's SIM data (carrier name, mcc mnc, country code, telephonenumber, etc)</description>
+  <description>A plugin to get the device's SIM data (carrier name, mcc mnc, country code, telephonenumber, imei, etc)</description>
   <license>MIT</license>
   <keywords>cordova,sim,carrier,mcc,mnc,telephonenumber</keywords>
   <repo>https://github.com/pbakondy/cordova-plugin-sim</repo>
@@ -26,7 +26,8 @@
       </feature>
     </config-file>
 
-    <!-- for method getLine1Number() -->
+    <framework src="com.android.support:support-v4:+" />
+
     <config-file target="AndroidManifest.xml" parent="/*">
       <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     </config-file>

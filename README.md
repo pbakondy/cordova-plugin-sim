@@ -67,7 +67,7 @@ Additional return values:
 * `isNetworkRoaming`: Boolean - true if the device is considered roaming on the current network, for GSM purposes
 
 <sup>1)</sup> Notice: the content of phoneNumber is unreliable (see [this](http://stackoverflow.com/questions/7922734/getting-reliable-msisdn-from-android-phone-voicemailnumber-line1number) and [this](http://stackoverflow.com/questions/25861064/retrieving-line1-number-from-telephonymanager-in-android) article).
-Sometimes phoneNumber value is only an empty string.
+Sometimes phoneNumber is only an empty string.
 
 ### Android Emulator results
 
@@ -152,6 +152,35 @@ Sometimes phoneNumber value is only an empty string.
 |    3 | `SIM_STATE_PUK_REQUIRED`      | Locked: requires the user's SIM PUK to unlock
 |    4 | `SIM_STATE_NETWORK_LOCKED`    | Locked: requires a network PIN to unlock
 |    5 | `SIM_STATE_READY`             | Ready
+
+### Android 6.0 Permissions
+
+Beginning in Android 6.0 (API level 23), users grant permissions to apps while the app is running, not when they install the app.
+
+If the device is running Android 6.0 or higher, **and** your app's target SDK is 23 or higher: The app has to list the permissions in the manifest, **and** it must request each dangerous permission it needs while the app is running. The user can grant or deny each permission, and the app can continue to run with limited capabilities even if the user denies a permission request.
+
+Note: Beginning with Android 6.0 (API level 23), users can revoke permissions from any app at any time, even if the app targets a lower API level. You should test your app to verify that it behaves properly when it's missing a needed permission, regardless of what API level your app targets.
+
+```js
+// check permission
+function hasReadPermission() {
+  window.plugins.sim.hasReadPermission(successCallback, errorCallback);
+}
+
+// request permission
+function requestReadPermission() {
+  // no callbacks required as this opens a popup which returns async
+  window.plugins.sim.requestReadPermission();
+}
+```
+
+This plugin needs `READ_PHONE_STATE` permission for getting the following values:
+
+* `phoneNumber`
+* `deviceId`
+* `deviceSoftwareVersion`
+* `simSerialNumber`
+* `subscriberId`
 
 
 ## iOS Quirks

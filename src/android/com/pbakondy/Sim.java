@@ -7,36 +7,54 @@
 // class TelephonyManager
 // http://developer.android.com/reference/android/telephony/TelephonyManager.html
 
+// permissions
+// http://developer.android.com/training/permissions/requesting.html
+
 package com.pbakondy;
 
-import android.app.Activity;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.PluginResult;
+
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.Manifest;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 
 public class Sim extends CordovaPlugin {
 
+  private static final String GET_SIM_INFO = "getSimInfo";
+  private static final String HAS_READ_PERMISSION = "hasReadPermission";
+  private static final String REQUEST_READ_PERMISSION = "requestReadPermission";
+
+  private CallbackContext callback;
+
   @Override
   public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-    if (action.equals("getSimInfo")) {
+    callback = callbackContext;
+
+    if (GET_SIM_INFO.equals(action)) {
       Context context = this.cordova.getActivity().getApplicationContext();
 
       TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
-      String phoneNumber = manager.getLine1Number();
+      String phoneNumber = "";
       String countryCode = manager.getSimCountryIso();
       String simOperator = manager.getSimOperator();
       String carrierName = manager.getSimOperatorName();
 
-      String deviceId = manager.getDeviceId();
-      String deviceSoftwareVersion = manager.getDeviceSoftwareVersion();
-      String simSerialNumber = manager.getSimSerialNumber();
-      String subscriberId = manager.getSubscriberId();
+      String deviceId = "";
+      String deviceSoftwareVersion = "";
+      String simSerialNumber = "";
+      String subscriberId = "";
 
       int callState = manager.getCallState();
       int dataActivity = manager.getDataActivity();
@@ -45,6 +63,14 @@ public class Sim extends CordovaPlugin {
       int simState = manager.getSimState();
 
       boolean isNetworkRoaming = manager.isNetworkRoaming();
+
+      if (simPermissionGranted(Manifest.permission.READ_PHONE_STATE)) {
+        phoneNumber = manager.getLine1Number();
+        deviceId = manager.getDeviceId();
+        deviceSoftwareVersion = manager.getDeviceSoftwareVersion();
+        simSerialNumber = manager.getSimSerialNumber();
+        subscriberId = manager.getSubscriberId();
+      }
 
       String mcc = "";
       String mnc = "";
@@ -60,12 +86,6 @@ public class Sim extends CordovaPlugin {
       result.put("countryCode", countryCode);
       result.put("mcc", mcc);
       result.put("mnc", mnc);
-      result.put("phoneNumber", phoneNumber);
-
-      result.put("deviceId", deviceId);
-      result.put("deviceSoftwareVersion", deviceSoftwareVersion);
-      result.put("simSerialNumber", simSerialNumber);
-      result.put("subscriberId", subscriberId);
 
       result.put("callState", callState);
       result.put("dataActivity", dataActivity);
@@ -75,11 +95,50 @@ public class Sim extends CordovaPlugin {
 
       result.put("isNetworkRoaming", isNetworkRoaming);
 
+      if (simPermissionGranted(Manifest.permission.READ_PHONE_STATE)) {
+        result.put("phoneNumber", phoneNumber);
+        result.put("deviceId", deviceId);
+        result.put("deviceSoftwareVersion", deviceSoftwareVersion);
+        result.put("simSerialNumber", simSerialNumber);
+        result.put("subscriberId", subscriberId);
+      }
+
       callbackContext.success(result);
 
+      return true;
+    } else if (HAS_READ_PERMISSION.equals(action)) {
+      hasReadPermission();
+      return true;
+    } else if (REQUEST_READ_PERMISSION.equals(action)) {
+      requestReadPermission();
       return true;
     } else {
       return false;
     }
   }
+
+  private void hasReadPermission() {
+    this.callback.sendPluginResult(new PluginResult(PluginResult.Status.OK,
+      simPermissionGranted(Manifest.permission.READ_PHONE_STATE)));
+  }
+
+  private void requestReadPermission() {
+    requestPermission(Manifest.permission.READ_PHONE_STATE);
+  }
+
+  private boolean simPermissionGranted(String type) {
+    if (Build.VERSION.SDK_INT < 23) {
+      return true;
+    }
+    return (PackageManager.PERMISSION_GRANTED ==
+      ContextCompat.checkSelfPermission(this.cordova.getActivity(), type));
+  }
+
+  private void requestPermission(String type) {
+    if (!simPermissionGranted(type)) {
+      ActivityCompat.requestPermissions(this.cordova.getActivity(), new String[]{type}, 12345);
+    }
+    this.callback.success();
+  }
+
 }
