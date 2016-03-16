@@ -185,6 +185,16 @@ This plugin needs `READ_PHONE_STATE` permission for getting the following values
 
 Wiki: [How to test permissions](https://github.com/pbakondy/cordova-plugin-sim/wiki/Testing-Android-API-23-Permissions)
 
+### Build conflict with `phonegap-facebook-plugin`
+
+Android SDK uses Gradle build tool to create Android builds. `phonegap-facebook-plugin` does not implement `android-support-v4` dependency the recommended way, Gradle is not able to resolve the dependencies. The build process will fail.
+
+I suggest to use another plugin for facebook usage:
+
+- https://github.com/Telerik-Verified-Plugins/Facebook
+- https://github.com/jeduan/cordova-plugin-facebook4
+
+
 ## iOS Quirks
 
 Additional return value:
