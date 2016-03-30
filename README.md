@@ -53,7 +53,11 @@ You can extract country and carrier data from MCC and MNC codes, read further on
 
 ## Android Quirks
 
-Additional return values:
+### Requirements
+
+Install `Extras` / `Android Support Library` from Android SDK.
+
+### Additional return values
 
 * `phoneNumber`: String - phone number string for line 1, for example, the [MSISDN](http://en.wikipedia.org/wiki/MSISDN) for a GSM phone <sup>1</sup>
 * `deviceId`: String - the unique device ID, for example, the IMEI for GSM and the MEID or ESN for CDMA phones
