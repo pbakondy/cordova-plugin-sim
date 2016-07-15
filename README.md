@@ -50,6 +50,7 @@ On Windows Phone access to countryCode, MCC and MNC is not made provided (return
 
 You can extract country and carrier data from MCC and MNC codes, read further on [Wikipedia](http://en.wikipedia.org/wiki/Mobile_country_code) and [ITU-T](http://www.itu.int/pub/T-SP-E.212B-2014).
 
+You can find the name of mobile provider using [mcc-mnc-list](https://www.npmjs.com/package/mcc-mnc-list) npm package.
 
 ## Android Quirks
 
