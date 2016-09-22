@@ -226,7 +226,7 @@ Additional return values:
 
 * `isCellularDataEnabled`: Boolean - indicates whether the network is cellular data enabled
 * `isCellularDataRoamingEnabled`: Boolean - indicates whether the network allows data roaming
-* `IsNetworkAvailable`: Boolean - indicates whether the network is available
+* `isNetworkAvailable`: Boolean - indicates whether the network interface is available
 * `isWiFiEnabled`: Boolean - indicates whether the network is Wi-Fi enabled
 
 

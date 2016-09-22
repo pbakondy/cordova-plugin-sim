@@ -1,5 +1,7 @@
 ﻿// DeviceNetworkInformation
 // https://msdn.microsoft.com/en-us/library/windows/apps/microsoft.phone.net.networkinformation.devicenetworkinformation(v=vs.105).aspx
+//
+// TODO http://stackoverflow.com/a/21879531
 
 using System;
 using Microsoft.Phone.Net.NetworkInformation;
@@ -11,7 +13,7 @@ namespace WPCordovaClassLib.Cordova.Commands
         public void getSimInfo(string notused)
         {
 
-            string res = String.Format("\"carrierName\":\"{0}\",\"countryCode\":\"\",\"mcc\":\"\",\"mnc\":\"\",\"isCellularDataEnabled\":\"{1}\",\"isCellularDataRoamingEnabled\":\"{2}\",\"IsNetworkAvailable\":\"{3}\",\"isWiFiEnabled\":\"{4}\"",
+            string res = String.Format("\"carrierName\":\"{0}\",\"countryCode\":\"\",\"mcc\":\"\",\"mnc\":\"\",\"isCellularDataEnabled\":\"{1}\",\"isCellularDataRoamingEnabled\":\"{2}\",\"isNetworkAvailable\":\"{3}\",\"isWiFiEnabled\":\"{4}\"",
                                         this.CellularMobileOperator,
                                         this.IsCellularDataEnabled,
                                         this.IsCellularDataRoamingEnabled,
