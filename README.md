@@ -59,19 +59,53 @@ You can find the name of mobile provider using [mcc-mnc-list](https://www.npmjs.
 
 Install `Extras` / `Android Support Library` from Android SDK.
 
-### Additional return values
+### Under the hood
 
-* `phoneNumber`: String - phone number string for line 1, for example, the [MSISDN](http://en.wikipedia.org/wiki/MSISDN) for a GSM phone <sup>1</sup>
-* `deviceId`: String - the unique device ID, for example, the IMEI for GSM and the MEID or ESN for CDMA phones
-* `deviceSoftwareVersion`: String - the software version number for the device, for example, the IMEI/SV for GSM phones
-* `simSerialNumber`: String - the serial number of the SIM, if applicable
-* `subscriberId`: String - the unique subscriber ID, for example, the IMSI for a GSM phone
-* `callState`: Number - the call state (cellular) on the device
-* `dataActivity`: Number - the type of activity on a data connection (cellular)
-* `networkType`: Number - the NETWORK_TYPE_xxxx for current data connection
-* `phoneType`: Number - the device phone type. This indicates the type of radio used to transmit voice calls
-* `simState`: Number - the state of the device SIM card
-* `isNetworkRoaming`: Boolean - true if the device is considered roaming on the current network, for GSM purposes
+This plugin uses two different Android APIs to receive SIM data:
+- `TelephonyManager` (since API level 1)
+- `SubscriptionManager` (since API level 22)
+
+Since Android 6 (API level 23) a few methods of `TelephonyManager` require permission `READ_PHONE_STATE`.
+
+All methods of `SubscriptionManager` require permission `READ_PHONE_STATE`.
+
+`SubscriptionManager` is able to access multiple SIM data. The return object of this cordova plugin provides the details of the available sim cards in an array (`cards`).
+
+### Return object
+
+
+- `carrierName`: {String} Service Provider Name (SPN)
+- `countryCode`: {String} ISO country code equivalent for the SIM provider's country code
+- `mcc`: {String} MCC (mobile country code) of the provider of the SIM
+- `mnc`: {String} MNC (mobile network code) of the provider of the SIM
+- `callState`: {Number} call state (cellular) on the device
+- `dataActivity`: {Number} type of activity on a data connection (cellular)
+- `networkType`: {Number} the NETWORK_TYPE_xxxx for current data connection
+- `phoneType`: {Number} device phone type. This indicates the type of radio used to transmit voice calls
+- `simState`: {Number} the state of the device SIM card
+- `isNetworkRoaming`: {Boolean} true if the device is considered roaming on the current network, for GSM purposes
+- `phoneCount`: {Number} the number of phones available. Returns 0 if none of voice, sms, data is not supported. Returns 1 for Single standby mode (Single SIM functionality). Returns 2 for Dual standby mode (Dual SIM functionality)
+- `activeSubscriptionInfoCount`: {Number} [`READ_PHONE_STATE`] the current number of active subscriptions
+- `activeSubscriptionInfoCountMax`: {Number} [`READ_PHONE_STATE`] the maximum number of active subscriptions
+- `phoneNumber`: {String} [`READ_PHONE_STATE`] - phone number string for line 1, for example, the [MSISDN](http://en.wikipedia.org/wiki/MSISDN) for a GSM phone <sup>1</sup>
+- `deviceId`: {String} [`READ_PHONE_STATE`] the unique device ID, for example, the IMEI for GSM and the MEID or ESN for CDMA phones
+- `deviceSoftwareVersion`: {String} [`READ_PHONE_STATE`] the software version number for the device, for example, the IMEI/SV for GSM phones
+- `simSerialNumber`: {String} [`READ_PHONE_STATE`] the serial number of the SIM, if applicable
+- `subscriberId`: {String} [`READ_PHONE_STATE`] the unique subscriber ID, for example, the IMSI for a GSM phone
+- `cards`: {Array} [`READ_PHONE_STATE`] List of SIM cards
+  - `carrierName`: {String} the name displayed to the user that identifies Subscription provider name
+  - `displayName`: {String} the name displayed to the user that identifies this subscription
+  - `countryCode`: {String} the ISO country code
+  - `mcc`: {String} MCC (mobile country code) of the provider of the SIM
+  - `mnc`: {String} MNC (mobile network code) of the provider of the SIM
+  - `isNetworkRoaming`: {Boolean} Returns true if the device is considered roaming on the current network for a subscription
+  - `isDataRoaming`: {Boolean} the data roaming state for this subscription
+  - `simSlotIndex`: {Number} the slot index of this Subscription's SIM card
+  - `phoneNumber`: {String} the number of this subscription
+  - `deviceId`: {String} the unique device ID of a subscription, for example, the IMEI for GSM and the MEID for CDMA phones
+  - `simSerialNumber`: {String} ICC ID
+  - `subscriptionId`: {String} Subscription Identifier, this is a device unique number
+
 
 <sup>1)</sup> Notice: the content of phoneNumber is unreliable (see [this](http://stackoverflow.com/questions/7922734/getting-reliable-msisdn-from-android-phone-voicemailnumber-line1number) and [this](http://stackoverflow.com/questions/25861064/retrieving-line1-number-from-telephonymanager-in-android) article).
 Sometimes phoneNumber is only an empty string.
@@ -188,7 +222,9 @@ This plugin needs `READ_PHONE_STATE` permission for getting the following values
 * `deviceSoftwareVersion`
 * `simSerialNumber`
 * `subscriberId`
-
+* `activeSubscriptionInfoCount`
+* `activeSubscriptionInfoCountMax`
+* multiple SIM card data
 
 Wiki: [How to test permissions](https://github.com/pbakondy/cordova-plugin-sim/wiki/Testing-Android-API-23-Permissions)
 

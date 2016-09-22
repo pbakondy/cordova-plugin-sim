@@ -6,9 +6,22 @@
 
 // class TelephonyManager
 // http://developer.android.com/reference/android/telephony/TelephonyManager.html
+// https://github.com/android/platform_frameworks_base/blob/master/telephony/java/android/telephony/TelephonyManager.java
 
 // permissions
 // http://developer.android.com/training/permissions/requesting.html
+
+// Multiple SIM Card Support
+// https://developer.android.com/about/versions/android-5.1.html
+
+// class SubscriptionManager
+// https://developer.android.com/reference/android/telephony/SubscriptionManager.html
+// https://github.com/android/platform_frameworks_base/blob/master/telephony/java/android/telephony/SubscriptionManager.java
+
+// class SubscriptionInfo
+// https://developer.android.com/reference/android/telephony/SubscriptionInfo.html
+// https://github.com/android/platform_frameworks_base/blob/master/telephony/java/android/telephony/SubscriptionInfo.java
+
 
 package com.pbakondy;
 
@@ -20,14 +33,18 @@ import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.Manifest;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.telephony.SubscriptionInfo;
+import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
+
+import java.util.List;
 
 public class Sim extends CordovaPlugin {
 
@@ -37,6 +54,7 @@ public class Sim extends CordovaPlugin {
 
   private CallbackContext callback;
 
+  @SuppressLint("HardwareIds")
   @Override
   public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
     callback = callbackContext;
@@ -46,15 +64,79 @@ public class Sim extends CordovaPlugin {
 
       TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
-      String phoneNumber = "";
+      // dual SIM detection with SubscriptionManager API
+      // requires API 22
+      // requires permission READ_PHONE_STATE
+      JSONArray sims = null;
+      Integer phoneCount = null;
+      Integer activeSubscriptionInfoCount = null;
+      Integer activeSubscriptionInfoCountMax = null;
+
+      try {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+
+          phoneCount = manager.getPhoneCount();
+
+          if (simPermissionGranted(Manifest.permission.READ_PHONE_STATE)) {
+
+            SubscriptionManager subscriptionManager = (SubscriptionManager) context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
+            activeSubscriptionInfoCount = subscriptionManager.getActiveSubscriptionInfoCount();
+            activeSubscriptionInfoCountMax = subscriptionManager.getActiveSubscriptionInfoCountMax();
+
+            sims = new JSONArray();
+
+            List<SubscriptionInfo> subscriptionInfos = subscriptionManager.getActiveSubscriptionInfoList();
+            for (SubscriptionInfo subscriptionInfo : subscriptionInfos) {
+
+              CharSequence carrierName = subscriptionInfo.getCarrierName();
+              String countryIso = subscriptionInfo.getCountryIso();
+              int dataRoaming = subscriptionInfo.getDataRoaming();  // 1 is enabled ; 0 is disabled
+              CharSequence displayName = subscriptionInfo.getDisplayName();
+              String iccId = subscriptionInfo.getIccId();
+              int mcc = subscriptionInfo.getMcc();
+              int mnc = subscriptionInfo.getMnc();
+              String number = subscriptionInfo.getNumber();
+              int simSlotIndex = subscriptionInfo.getSimSlotIndex();
+              int subscriptionId = subscriptionInfo.getSubscriptionId();
+
+              boolean networkRoaming = subscriptionManager.isNetworkRoaming(simSlotIndex);
+              String deviceId = manager.getDeviceId(simSlotIndex);
+
+              JSONObject simData = new JSONObject();
+
+              simData.put("carrierName", carrierName.toString());
+              simData.put("displayName", displayName.toString());
+              simData.put("countryCode", countryIso);
+              simData.put("mcc", mcc);
+              simData.put("mnc", mnc);
+              simData.put("isNetworkRoaming", networkRoaming);
+              simData.put("isDataRoaming", (dataRoaming == 1));
+              simData.put("simSlotIndex", simSlotIndex);
+              simData.put("phoneNumber", number);
+              simData.put("deviceId", deviceId);
+              simData.put("simSerialNumber", iccId);
+              simData.put("subscriptionId", subscriptionId);
+
+              sims.put(simData);
+
+            }
+          }
+        }
+      } catch (JSONException e) {
+        e.printStackTrace();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+
+      String phoneNumber = null;
       String countryCode = manager.getSimCountryIso();
       String simOperator = manager.getSimOperator();
       String carrierName = manager.getSimOperatorName();
 
-      String deviceId = "";
-      String deviceSoftwareVersion = "";
-      String simSerialNumber = "";
-      String subscriberId = "";
+      String deviceId = null;
+      String deviceSoftwareVersion = null;
+      String simSerialNumber = null;
+      String subscriberId = null;
 
       int callState = manager.getCallState();
       int dataActivity = manager.getDataActivity();
@@ -95,12 +177,26 @@ public class Sim extends CordovaPlugin {
 
       result.put("isNetworkRoaming", isNetworkRoaming);
 
+      if (phoneCount != null) {
+        result.put("phoneCount", (int)phoneCount);
+      }
+      if (activeSubscriptionInfoCount != null) {
+        result.put("activeSubscriptionInfoCount", (int)activeSubscriptionInfoCount);
+      }
+      if (activeSubscriptionInfoCountMax != null) {
+        result.put("activeSubscriptionInfoCountMax", (int)activeSubscriptionInfoCountMax);
+      }
+
       if (simPermissionGranted(Manifest.permission.READ_PHONE_STATE)) {
         result.put("phoneNumber", phoneNumber);
         result.put("deviceId", deviceId);
         result.put("deviceSoftwareVersion", deviceSoftwareVersion);
         result.put("simSerialNumber", simSerialNumber);
         result.put("subscriberId", subscriberId);
+      }
+
+      if (sims != null && sims.length() != 0) {
+        result.put("cards", sims);
       }
 
       callbackContext.success(result);
