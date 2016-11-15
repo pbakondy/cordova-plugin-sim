@@ -211,8 +211,7 @@ function hasReadPermission() {
 
 // request permission
 function requestReadPermission() {
-  // no callbacks required as this opens a popup which returns async
-  window.plugins.sim.requestReadPermission();
+  window.plugins.sim.requestReadPermission(successCallback, errorCallback);
 }
 ```
 

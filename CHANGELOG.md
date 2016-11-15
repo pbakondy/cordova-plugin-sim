@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.3.1
+
+- Android: callbacks for requestReadPermission()
+
 ## v1.3.0
 
 - add multiple SIM support on Android
