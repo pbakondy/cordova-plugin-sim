@@ -237,6 +237,8 @@ public class Sim extends CordovaPlugin {
     LOG.i(LOG_TAG, "requestPermission");
     if (!simPermissionGranted(type)) {
       cordova.requestPermission(this, 12345, type);
+    } else {
+      this.callback.success();
     }
   }
 
