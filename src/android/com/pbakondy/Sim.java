@@ -28,6 +28,7 @@ package com.pbakondy;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
+import org.apache.cordova.LOG;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
@@ -47,6 +48,8 @@ import android.telephony.TelephonyManager;
 import java.util.List;
 
 public class Sim extends CordovaPlugin {
+  private static final String LOG_TAG = "CordovaPluginSim";
+
 
   private static final String GET_SIM_INFO = "getSimInfo";
   private static final String HAS_READ_PERMISSION = "hasReadPermission";
@@ -231,10 +234,19 @@ public class Sim extends CordovaPlugin {
   }
 
   private void requestPermission(String type) {
+    LOG.i(LOG_TAG, "requestPermission");
     if (!simPermissionGranted(type)) {
-      ActivityCompat.requestPermissions(this.cordova.getActivity(), new String[]{type}, 12345);
+      cordova.requestPermission(this, 12345, type);
     }
-    this.callback.success();
   }
 
+  @Override
+  public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException
+  {
+    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+      this.callback.success();
+    } else {
+      this.callback.error("Permission Denied.");
+    }
+  }
 }
