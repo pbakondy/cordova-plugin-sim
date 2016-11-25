@@ -12,6 +12,7 @@
 
   <engines>
     <engine name="cordova" version=">=3.0.0"/>
+    <engine name="cordova-android" version=">=5.0.0"/>
   </engines>
 
   <js-module src="www/sim.js" name="Sim">
@@ -25,8 +26,6 @@
         <param name="android-package" value="com.pbakondy.Sim"/>
       </feature>
     </config-file>
-
-    <framework src="com.android.support:support-v4:+" />
 
     <config-file target="AndroidManifest.xml" parent="/*">
       <uses-permission android:name="android.permission.READ_PHONE_STATE" />

@@ -22,6 +22,8 @@
 // https://developer.android.com/reference/android/telephony/SubscriptionInfo.html
 // https://github.com/android/platform_frameworks_base/blob/master/telephony/java/android/telephony/SubscriptionInfo.java
 
+// Cordova Permissions API
+// https://cordova.apache.org/docs/en/latest/guide/platforms/android/plugin.html#android-permissions
 
 package com.pbakondy;
 
@@ -39,8 +41,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.Manifest;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
@@ -229,8 +230,7 @@ public class Sim extends CordovaPlugin {
     if (Build.VERSION.SDK_INT < 23) {
       return true;
     }
-    return (PackageManager.PERMISSION_GRANTED ==
-      ContextCompat.checkSelfPermission(this.cordova.getActivity(), type));
+    return cordova.hasPermission(type);
   }
 
   private void requestPermission(String type) {
@@ -248,7 +248,7 @@ public class Sim extends CordovaPlugin {
     if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
       this.callback.success();
     } else {
-      this.callback.error("Permission Denied.");
+      this.callback.error("Permission denied");
     }
   }
 }
