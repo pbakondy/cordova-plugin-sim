@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.3.2
+
+- Android: use Cordova Permissions API
+- Android: drop Android Support Library requirement
+
 ## v1.3.1
 
 - Android: callbacks for requestReadPermission()

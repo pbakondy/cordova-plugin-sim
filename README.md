@@ -37,6 +37,16 @@ function successCallback(result) {
 function errorCallback(error) {
   console.log(error);
 }
+
+// Android only: check permission
+function hasReadPermission() {
+  window.plugins.sim.hasReadPermission(successCallback, errorCallback);
+}
+
+// Android only: request permission
+function requestReadPermission() {
+  window.plugins.sim.requestReadPermission(successCallback, errorCallback);
+}
 ```
 
 The plugin returns a JSON object. Return values:
@@ -55,10 +65,6 @@ You can extract country and carrier data from MCC and MNC codes, read further on
 You can find the name of mobile provider using [mcc-mnc-list](https://www.npmjs.com/package/mcc-mnc-list) npm package.
 
 ## Android Quirks
-
-### Requirements
-
-Install `Extras` / `Android Support Library` from Android SDK.
 
 ### Under the hood
 
@@ -275,4 +281,4 @@ Additional return values:
 
 ## LICENSE
 
-cordova-plugin-sim is licensed under the MIT Open Source license. For more information, see the LICENSE file in this repository.
+**cordova-plugin-sim** is licensed under the MIT Open Source license. For more information, see the LICENSE file in this repository.
