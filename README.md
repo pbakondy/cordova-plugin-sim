@@ -64,6 +64,30 @@ You can extract country and carrier data from MCC and MNC codes, read further on
 
 You can find the name of mobile provider using [mcc-mnc-list](https://www.npmjs.com/package/mcc-mnc-list) npm package.
 
+### Ionic 2 Usage
+
+```typescript
+import { Sim } from 'ionic-native';
+
+Sim.getSimInfo().then(
+  (info) => console.log('Sim info: ', info),
+  (err) => console.log('Unable to get sim info: ', err)
+);
+
+Sim.hasReadPermission().then(
+  (info) => console.log('Has permission:', info)
+);
+
+Sim.requestReadPermission().then(
+  () => console.log('Permission granted'),
+  () => console.log('Permission denied')
+);
+```
+
+Required: [ionic-native](https://www.npmjs.com/package/ionic-native) v2.2.13
+
+See [Ionic Native documentation](https://ionicframework.com/docs/v2/native/sim/).
+
 ## Android Quirks
 
 ### Under the hood
