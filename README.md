@@ -202,6 +202,9 @@ Sometimes phoneNumber is only an empty string.
 |   13 | `NETWORK_TYPE_LTE`            | LTE
 |   14 | `NETWORK_TYPE_EHRPD`          | eHRPD
 |   15 | `NETWORK_TYPE_HSPAP`          | HSPA+
+|   16 | `NETWORK_TYPE_GSM`            | GSM
+|   17 | `NETWORK_TYPE_TD_SCDMA`       | TD-SCDMA
+|   18 | `NETWORK_TYPE_IWLAN`          | IWLAN
 
 
 ### List of Phone Type Codes and Meanings
