@@ -5,11 +5,13 @@
 // http://www.itu.int/pub/T-SP-E.212B-2014
 
 // class CTCarrier
-// https://developer.apple.com/library/prerelease/ios/documentation/NetworkingInternet/Reference/CTCarrier/index.html
+// https://developer.apple.com/reference/coretelephony/ctcarrier?language=objc
 
 #import "Sim.h"
 #import <Cordova/CDV.h>
 #import <Foundation/Foundation.h>
+#import <CoreTelephony/CTCarrier.h>
+#import <CoreTelephony/CTTelephonyNetworkInfo.h>
 
 @implementation Sim
 
