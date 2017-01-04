@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.3.3
+
+- Android: Adjust required API levels
+- iOS: add CoreTelephony imports
+- docs: Ionic 2 Usage
+- docs: API level 25 codes
+
 ## v1.3.2
 
 - Android: use Cordova Permissions API
