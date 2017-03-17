@@ -138,7 +138,7 @@ All methods of `SubscriptionManager` require permission `READ_PHONE_STATE`.
   - `subscriptionId`: {String} Subscription Identifier, this is a device unique number
 
 
-<sup>1)</sup> Notice: the content of phoneNumber is unreliable (see [this](http://stackoverflow.com/questions/7922734/getting-reliable-msisdn-from-android-phone-voicemailnumber-line1number) and [this](http://stackoverflow.com/questions/25861064/retrieving-line1-number-from-telephonymanager-in-android) article).
+<sup>1)</sup> Notice: the content of phoneNumber is unreliable (see [this](http://stackoverflow.com/a/6797278), [this](http://stackoverflow.com/questions/7922734/getting-reliable-msisdn-from-android-phone-voicemailnumber-line1number), and [this](http://stackoverflow.com/questions/25861064/retrieving-line1-number-from-telephonymanager-in-android) article).
 Sometimes phoneNumber is only an empty string.
 
 ### Android Emulator results
