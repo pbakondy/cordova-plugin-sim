@@ -20,6 +20,20 @@
   CTTelephonyNetworkInfo *netinfo = [[CTTelephonyNetworkInfo alloc] init];
   CTCarrier *carrier = [netinfo subscriberCellularProvider];
 
+  NSMutableDictionary *carriers = [[NSMutableDictionary alloc] init];
+  if (@available(iOS 12.0, *)) {
+      NSDictionary *carrierObjects = [netinfo serviceSubscriberCellularProviders];
+      for (NSString* key in carrierObjects) {
+          carriers[key] = [NSDictionary dictionaryWithObjectsAndKeys:
+          @([carrierObjects[key] allowsVOIP]), @"allowsVOIP",
+          [carrierObjects[key] carrierName], @"carrierName",
+          [carrierObjects[key] isoCountryCode], @"countryCode",
+          [carrierObjects[key] mobileCountryCode], @"mcc",
+          [carrierObjects[key] mobileNetworkCode], @"mnc",
+          nil];
+      }
+  }
+
   BOOL allowsVOIPResult = [carrier allowsVOIP];
   NSString *carrierNameResult = [carrier carrierName];
   NSString *carrierCountryResult = [carrier isoCountryCode];
@@ -44,7 +58,8 @@
     carrierNameResult, @"carrierName",
     carrierCountryResult, @"countryCode",
     carrierCodeResult, @"mcc",
-    carrierNetworkResult, @"mnc",
+    carrierNetworkResult, @"mnc",               
+    carriers, @"cards",
     nil];
 
   CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:simData];
