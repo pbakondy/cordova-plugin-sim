@@ -188,7 +188,9 @@ Log.i(LOG_TAG, "rupendra-9-6");
         Log.i(LOG_TAG, "rupendra-9-11");
         deviceSoftwareVersion = manager.getDeviceSoftwareVersion();
         Log.i(LOG_TAG, "rupendra-9-12");
-        simSerialNumber = manager.getSimSerialNumber();
+         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q) {
+          simSerialNumber = manager.getSimSerialNumber();
+         }
         Log.i(LOG_TAG, "rupendra-9-13");
         subscriberId = manager.getSubscriberId();
         Log.i(LOG_TAG, "rupendra-9-14");
