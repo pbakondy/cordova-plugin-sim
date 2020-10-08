@@ -190,9 +190,10 @@ Log.i(LOG_TAG, "rupendra-9-6");
         Log.i(LOG_TAG, "rupendra-9-12");
          if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q) {
           simSerialNumber = manager.getSimSerialNumber();
-         }
-        Log.i(LOG_TAG, "rupendra-9-13");
+            Log.i(LOG_TAG, "rupendra-9-13");
         subscriberId = manager.getSubscriberId();
+         }
+       
         Log.i(LOG_TAG, "rupendra-9-14");
       }
  Log.i(LOG_TAG, "rupendra-10");
