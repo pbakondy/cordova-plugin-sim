@@ -110,9 +110,7 @@ public class Sim extends CordovaPlugin {
               int mnc = subscriptionInfo.getMnc();
               String number = subscriptionInfo.getNumber();
               int simSlotIndex = subscriptionInfo.getSimSlotIndex();
-              int sub if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M && android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q) {
-                deviceId = manager.getDeviceId(simSlotIndex);
-              }scriptionId = subscriptionInfo.getSubscriptionId();
+              int subscriptionId = subscriptionInfo.getSubscriptionId();
 
               boolean networkRoaming = subscriptionManager.isNetworkRoaming(simSlotIndex);
 
