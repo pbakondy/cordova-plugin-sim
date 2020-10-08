@@ -122,7 +122,7 @@ public class Sim extends CordovaPlugin {
               }
 
               JSONObject simData = new JSONObject();
- LOG.d(LOG_TAG, "rupendra-7);
+ LOG.d(LOG_TAG, "rupendra-7");
               simData.put("carrierName", carrierName.toString());
               simData.put("displayName", displayName.toString());
               simData.put("countryCode", countryIso);
