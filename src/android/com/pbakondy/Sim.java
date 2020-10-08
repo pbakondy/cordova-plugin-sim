@@ -100,12 +100,19 @@ public class Sim extends CordovaPlugin {
               String countryIso = subscriptionInfo.getCountryIso();
               int dataRoaming = subscriptionInfo.getDataRoaming();  // 1 is enabled ; 0 is disabled
               CharSequence displayName = subscriptionInfo.getDisplayName();
-              String iccId = subscriptionInfo.getIccId();
+              String iccId = "";
+              
+              if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q) {
+                iccId = subscriptionInfo.getIccId();
+              }
+              
               int mcc = subscriptionInfo.getMcc();
               int mnc = subscriptionInfo.getMnc();
               String number = subscriptionInfo.getNumber();
               int simSlotIndex = subscriptionInfo.getSimSlotIndex();
-              int subscriptionId = subscriptionInfo.getSubscriptionId();
+              int sub if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M && android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q) {
+                deviceId = manager.getDeviceId(simSlotIndex);
+              }scriptionId = subscriptionInfo.getSubscriptionId();
 
               boolean networkRoaming = subscriptionManager.isNetworkRoaming(simSlotIndex);
 
