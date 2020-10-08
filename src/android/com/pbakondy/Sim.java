@@ -39,6 +39,7 @@ import org.json.JSONException;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.provider.Settings.Secure;
 import android.os.Build;
 import android.Manifest;
 
@@ -161,12 +162,10 @@ public class Sim extends CordovaPlugin {
       boolean isNetworkRoaming = manager.isNetworkRoaming();
 
       if (simPermissionGranted(Manifest.permission.READ_PHONE_STATE)) {
-        phoneNumber = manager.getLine1Number
+        phoneNumber = manager.getLine1Number();
           
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-           deviceId = Settings.Secure.getString(
-            getContentResolver(),
-            Settings.Secure.ANDROID_ID);
+           deviceId = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
         }else{
           deviceId = manager.getDeviceId();
         }
