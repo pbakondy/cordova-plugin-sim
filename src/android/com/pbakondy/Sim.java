@@ -76,24 +76,24 @@ public class Sim extends CordovaPlugin {
       Integer phoneCount = null;
       Integer activeSubscriptionInfoCount = null;
       Integer activeSubscriptionInfoCountMax = null;
-   LOG.d(LOG_TAG, "rupendra-1");
+   Log.i(LOG_TAG, "rupendra-1");
            
       try {
         // TelephonyManager.getPhoneCount() requires API 23
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
           phoneCount = manager.getPhoneCount();
         }
- LOG.d(LOG_TAG, "rupendra-2");
+ Log.i(LOG_TAG, "rupendra-2");
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
- LOG.d(LOG_TAG, "rupendra-3");
+ Log.i(LOG_TAG, "rupendra-3");
           if (simPermissionGranted(Manifest.permission.READ_PHONE_STATE)) {
- LOG.d(LOG_TAG, "rupendra-4");
+ Log.i(LOG_TAG, "rupendra-4");
             SubscriptionManager subscriptionManager = (SubscriptionManager) context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
             activeSubscriptionInfoCount = subscriptionManager.getActiveSubscriptionInfoCount();
             activeSubscriptionInfoCountMax = subscriptionManager.getActiveSubscriptionInfoCountMax();
 
             sims = new JSONArray();
- LOG.d(LOG_TAG, "rupendra-5");
+ Log.i(LOG_TAG, "rupendra-5");
             List<SubscriptionInfo> subscriptionInfos = subscriptionManager.getActiveSubscriptionInfoList();
             for (SubscriptionInfo subscriptionInfo : subscriptionInfos) {
 
@@ -114,7 +114,7 @@ public class Sim extends CordovaPlugin {
               int subscriptionId = subscriptionInfo.getSubscriptionId();
 
               boolean networkRoaming = subscriptionManager.isNetworkRoaming(simSlotIndex);
- LOG.d(LOG_TAG, "rupendra-6");
+ Log.i(LOG_TAG, "rupendra-6");
               String deviceId = null;
               // TelephonyManager.getDeviceId(slotId) requires API 23
               if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M && android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q) {
@@ -122,7 +122,7 @@ public class Sim extends CordovaPlugin {
               }
 
               JSONObject simData = new JSONObject();
- LOG.d(LOG_TAG, "rupendra-7");
+ Log.i(LOG_TAG, "rupendra-7");
               simData.put("carrierName", carrierName.toString());
               simData.put("displayName", displayName.toString());
               simData.put("countryCode", countryIso);
@@ -137,7 +137,7 @@ public class Sim extends CordovaPlugin {
               }
               simData.put("simSerialNumber", iccId);
               simData.put("subscriptionId", subscriptionId);
- LOG.d(LOG_TAG, "rupendra-8");
+ Log.i(LOG_TAG, "rupendra-8");
               sims.put(simData);
 
             }
@@ -158,40 +158,40 @@ public class Sim extends CordovaPlugin {
       String deviceSoftwareVersion = null;
       String simSerialNumber = null;
       String subscriberId = null;
- LOG.d(LOG_TAG, "rupendra-9");
+ Log.i(LOG_TAG, "rupendra-9");
       int callState = manager.getCallState();
-       LOG.d(LOG_TAG, "rupendra-9-1");
+       Log.i(LOG_TAG, "rupendra-9-1");
       int dataActivity = manager.getDataActivity();
-       LOG.d(LOG_TAG, "rupendra-9-2");
+       Log.i(LOG_TAG, "rupendra-9-2");
       int networkType = manager.getNetworkType();
-       LOG.d(LOG_TAG, "rupendra-9-3");
+       Log.i(LOG_TAG, "rupendra-9-3");
       int phoneType = manager.getPhoneType();
-       LOG.d(LOG_TAG, "rupendra-9-4");
+       Log.i(LOG_TAG, "rupendra-9-4");
       int simState = manager.getSimState();
-       LOG.d(LOG_TAG, "rupendra-9-5");
+       Log.i(LOG_TAG, "rupendra-9-5");
 
       boolean isNetworkRoaming = manager.isNetworkRoaming();
-LOG.d(LOG_TAG, "rupendra-9-6");
+Log.i(LOG_TAG, "rupendra-9-6");
       if (simPermissionGranted(Manifest.permission.READ_PHONE_STATE)) {
-        LOG.d(LOG_TAG, "rupendra-9-7");
+        Log.i(LOG_TAG, "rupendra-9-7");
         phoneNumber = manager.getLine1Number();
-          LOG.d(LOG_TAG, "rupendra-9-8");
+          Log.i(LOG_TAG, "rupendra-9-8");
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-          LOG.d(LOG_TAG, "rupendra-9-9");
+          Log.i(LOG_TAG, "rupendra-9-9");
            deviceId = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
         }else{
-          LOG.d(LOG_TAG, "rupendra-9-10");
+          Log.i(LOG_TAG, "rupendra-9-10");
           deviceId = manager.getDeviceId();
         }
-        LOG.d(LOG_TAG, "rupendra-9-11");
+        Log.i(LOG_TAG, "rupendra-9-11");
         deviceSoftwareVersion = manager.getDeviceSoftwareVersion();
-        LOG.d(LOG_TAG, "rupendra-9-12");
+        Log.i(LOG_TAG, "rupendra-9-12");
         simSerialNumber = manager.getSimSerialNumber();
-        LOG.d(LOG_TAG, "rupendra-9-13");
+        Log.i(LOG_TAG, "rupendra-9-13");
         subscriberId = manager.getSubscriberId();
-        LOG.d(LOG_TAG, "rupendra-9-14");
+        Log.i(LOG_TAG, "rupendra-9-14");
       }
- LOG.d(LOG_TAG, "rupendra-10");
+ Log.i(LOG_TAG, "rupendra-10");
       String mcc = "";
       String mnc = "";
 
@@ -206,13 +206,13 @@ LOG.d(LOG_TAG, "rupendra-9-6");
       result.put("countryCode", countryCode);
       result.put("mcc", mcc);
       result.put("mnc", mnc);
- LOG.d(LOG_TAG, "rupendra-11");
+ Log.i(LOG_TAG, "rupendra-11");
       result.put("callState", callState);
       result.put("dataActivity", dataActivity);
       result.put("networkType", networkType);
       result.put("phoneType", phoneType);
       result.put("simState", simState);
- LOG.d(LOG_TAG, "rupendra-12");
+ Log.i(LOG_TAG, "rupendra-12");
       result.put("isNetworkRoaming", isNetworkRoaming);
 
       if (phoneCount != null) {
@@ -224,7 +224,7 @@ LOG.d(LOG_TAG, "rupendra-9-6");
       if (activeSubscriptionInfoCountMax != null) {
         result.put("activeSubscriptionInfoCountMax", (int)activeSubscriptionInfoCountMax);
       }
- LOG.d(LOG_TAG, "rupendra-13");
+ Log.i(LOG_TAG, "rupendra-13");
       if (simPermissionGranted(Manifest.permission.READ_PHONE_STATE)) {
         result.put("phoneNumber", phoneNumber);
         result.put("deviceId", deviceId);
@@ -232,24 +232,24 @@ LOG.d(LOG_TAG, "rupendra-9-6");
         result.put("simSerialNumber", simSerialNumber);
         result.put("subscriberId", subscriberId);
       }
- LOG.d(LOG_TAG, "rupendra-14");
+ Log.i(LOG_TAG, "rupendra-14");
       if (sims != null && sims.length() != 0) {
         result.put("cards", sims);
       }
- LOG.d(LOG_TAG, "rupendra-15");
+ Log.i(LOG_TAG, "rupendra-15");
       callbackContext.success(result);
- LOG.d(LOG_TAG, "rupendra-16");
+ Log.i(LOG_TAG, "rupendra-16");
       return true;
     } else if (HAS_READ_PERMISSION.equals(action)) {
- LOG.d(LOG_TAG, "rupendra-17");
+ Log.i(LOG_TAG, "rupendra-17");
       hasReadPermission();
       return true;
     } else if (REQUEST_READ_PERMISSION.equals(action)) {
-       LOG.d(LOG_TAG, "rupendra-18");
+       Log.i(LOG_TAG, "rupendra-18");
       requestReadPermission();
       return true;
     } else {
-       LOG.d(LOG_TAG, "rupendra-19");
+       Log.i(LOG_TAG, "rupendra-19");
       return false;
     }
   }
