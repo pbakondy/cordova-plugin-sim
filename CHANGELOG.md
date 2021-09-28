@@ -1,5 +1,9 @@
 # Changelog
 
+## this fork
+
+- Android: obtain default subscription id
+
 ## v1.3.3
 
 - Android: Adjust required API levels
