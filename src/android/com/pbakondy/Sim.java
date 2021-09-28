@@ -46,6 +46,9 @@ import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 
+import android.util.Log;
+
+import java.lang.reflect.Method;
 import java.util.List;
 
 public class Sim extends CordovaPlugin {
@@ -209,9 +212,18 @@ public class Sim extends CordovaPlugin {
         result.put("subscriberId", subscriberId);
       }
 
-      // android.telephony.SubscriptionManager#getDefaultDataSubscriptionId requires API 24
       if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+        // android.telephony.SubscriptionManager#getDefaultDataSubscriptionId requires API 24
         result.put("defaultDataSubscriptionId", SubscriptionManager.getDefaultDataSubscriptionId());
+      } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
+        // android.telephony.SubscriptionManager#getDefaultDataSubId requires API 22, must be accessed through reflection
+        try {
+          Method getDefaultDataSubId = SubscriptionManager.class.getDeclaredMethod("getDefaultDataSubId");
+          getDefaultDataSubId.setAccessible(true);
+          result.put("defaultDataSubscriptionId", getDefaultDataSubId.invoke(null));
+        } catch (Exception e) {
+          Log.w("Sim", e);
+        }
       }
       
       if (sims != null && sims.length() != 0) {
