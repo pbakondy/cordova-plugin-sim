@@ -11,7 +11,7 @@ This is a cordova plugin to get data from the SIM card like the carrier name, mc
 ## Installation
 
 ```
-cordova plugin add cordova-plugin-sim
+cordova plugin add https://github.com/alborrajo/cordova-plugin-sim
 ```
 
 ## Supported Platforms
@@ -123,6 +123,7 @@ All methods of `SubscriptionManager` require permission `READ_PHONE_STATE`.
 - `deviceSoftwareVersion`: {String} [`READ_PHONE_STATE`] the software version number for the device, for example, the IMEI/SV for GSM phones
 - `simSerialNumber`: {String} [`READ_PHONE_STATE`] the serial number of the SIM, if applicable
 - `subscriberId`: {String} [`READ_PHONE_STATE`] the unique subscriber ID, for example, the IMSI for a GSM phone
+- `defaultSubscriptionId`: {Number} the default subscription ID, this can be used to identify which SIM card is being used for the data connection
 - `cards`: {Array} [`READ_PHONE_STATE`] List of SIM cards
   - `carrierName`: {String} the name displayed to the user that identifies Subscription provider name
   - `displayName`: {String} the name displayed to the user that identifies this subscription
@@ -145,20 +146,37 @@ Sometimes phoneNumber is only an empty string.
 
 ```js
 {
-  "carrierName": "Android",
+  "carrierName": "T-Mobile",
   "countryCode": "us",
   "mcc": "310",
   "mnc": "260",
-  "phoneNumber": "15555215554",
-  "deviceId": "0000000000000000",
-  "simSerialNumber": "89014103211118510720",
-  "subscriberId": "310260000000000",
   "callState": 0,
-  "dataActivity": 0,
-  "networkType": 3,
+  "dataActivity": 4,
+  "networkType": 13,
   "phoneType": 1,
   "simState": 5,
-  "isNetworkRoaming": false
+  "isNetworkRoaming": false,
+  "phoneCount": 1,
+  "activeSubscriptionInfoCount": 1,
+  "activeSubscriptionInfoCountMax": 1,
+  "phoneNumber": "+15555215554",
+  "deviceSoftwareVersion": "----",
+  "defaultDataSubscriptionId": 1,
+  "cards": [
+    {
+      "carrierName": "Android",
+      "displayName": "T-Mobile",
+      "countryCode": "us",
+      "mcc": 310,
+      "mnc": 260,
+      "isNetworkRoaming": false,
+      "isDataRoaming": false,
+      "simSlotIndex": 0,
+      "phoneNumber": "+15555215554",
+      "simSerialNumber": "89014103211118510720",
+      "subscriptionId": 1
+    }
+  ]
 }
 ```
 
