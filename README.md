@@ -11,7 +11,7 @@ This is a cordova plugin to get data from the SIM card like the carrier name, mc
 ## Installation
 
 ```
-cordova plugin add cordova-plugin-sim
+cordova plugin add https://github.com/alborrajo/cordova-plugin-sim
 ```
 
 ## Supported Platforms
