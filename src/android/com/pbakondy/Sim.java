@@ -56,7 +56,7 @@ public class Sim extends CordovaPlugin {
   private static final String HAS_READ_PERMISSION = "hasReadPermission";
   private static final String REQUEST_READ_PERMISSION = "requestReadPermission";
   private final String[] permissions = { Manifest.permission.READ_PHONE_STATE
-      // ,Manifest.permission.READ_PHONE_NUMBERS
+      ,Manifest.permission.READ_PHONE_NUMBERS
       // ,Manifest.permission.READ_SMS
   };
 
