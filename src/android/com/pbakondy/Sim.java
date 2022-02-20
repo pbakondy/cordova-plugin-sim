@@ -39,6 +39,7 @@ import org.json.JSONException;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.provider.Settings.Secure;
 import android.os.Build;
 import android.Manifest;
 
@@ -46,194 +47,192 @@ import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 public class Sim extends CordovaPlugin {
   private static final String LOG_TAG = "CordovaPluginSim";
-
-
   private static final String GET_SIM_INFO = "getSimInfo";
   private static final String HAS_READ_PERMISSION = "hasReadPermission";
   private static final String REQUEST_READ_PERMISSION = "requestReadPermission";
+  private final String[] permissions = { Manifest.permission.READ_PHONE_STATE
+      ,Manifest.permission.READ_PHONE_NUMBERS
+      // ,Manifest.permission.READ_SMS
+  };
 
   private CallbackContext callback;
+
+  private final int ANDROID_VERSION_Q = 29;
 
   @SuppressLint("HardwareIds")
   @Override
   public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-    callback = callbackContext;
+    this.callback = callbackContext;
 
-    if (GET_SIM_INFO.equals(action)) {
-      Context context = this.cordova.getActivity().getApplicationContext();
+    switch (action) {
+    case GET_SIM_INFO:
+      return getSimInfo();
 
-      TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+    case HAS_READ_PERMISSION:
+      return hasReadPermission();
 
-      // dual SIM detection with SubscriptionManager API
-      // requires API 22
-      // requires permission READ_PHONE_STATE
-      JSONArray sims = null;
-      Integer phoneCount = null;
-      Integer activeSubscriptionInfoCount = null;
-      Integer activeSubscriptionInfoCountMax = null;
+    case REQUEST_READ_PERMISSION:
+      return requestReadPermission();
 
-      try {
-        // TelephonyManager.getPhoneCount() requires API 23
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-          phoneCount = manager.getPhoneCount();
-        }
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
-
-          if (simPermissionGranted(Manifest.permission.READ_PHONE_STATE)) {
-
-            SubscriptionManager subscriptionManager = (SubscriptionManager) context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
-            activeSubscriptionInfoCount = subscriptionManager.getActiveSubscriptionInfoCount();
-            activeSubscriptionInfoCountMax = subscriptionManager.getActiveSubscriptionInfoCountMax();
-
-            sims = new JSONArray();
-
-            List<SubscriptionInfo> subscriptionInfos = subscriptionManager.getActiveSubscriptionInfoList();
-            for (SubscriptionInfo subscriptionInfo : subscriptionInfos) {
-
-              CharSequence carrierName = subscriptionInfo.getCarrierName();
-              String countryIso = subscriptionInfo.getCountryIso();
-              int dataRoaming = subscriptionInfo.getDataRoaming();  // 1 is enabled ; 0 is disabled
-              CharSequence displayName = subscriptionInfo.getDisplayName();
-              String iccId = subscriptionInfo.getIccId();
-              int mcc = subscriptionInfo.getMcc();
-              int mnc = subscriptionInfo.getMnc();
-              String number = subscriptionInfo.getNumber();
-              int simSlotIndex = subscriptionInfo.getSimSlotIndex();
-              int subscriptionId = subscriptionInfo.getSubscriptionId();
-
-              boolean networkRoaming = subscriptionManager.isNetworkRoaming(simSlotIndex);
-
-              String deviceId = null;
-              // TelephonyManager.getDeviceId(slotId) requires API 23
-              if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                deviceId = manager.getDeviceId(simSlotIndex);
-              }
-
-              JSONObject simData = new JSONObject();
-
-              simData.put("carrierName", carrierName.toString());
-              simData.put("displayName", displayName.toString());
-              simData.put("countryCode", countryIso);
-              simData.put("mcc", mcc);
-              simData.put("mnc", mnc);
-              simData.put("isNetworkRoaming", networkRoaming);
-              simData.put("isDataRoaming", (dataRoaming == 1));
-              simData.put("simSlotIndex", simSlotIndex);
-              simData.put("phoneNumber", number);
-              if (deviceId != null) {
-                simData.put("deviceId", deviceId);
-              }
-              simData.put("simSerialNumber", iccId);
-              simData.put("subscriptionId", subscriptionId);
-
-              sims.put(simData);
-
-            }
-          }
-        }
-      } catch (JSONException e) {
-        e.printStackTrace();
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-
-      String phoneNumber = null;
-      String countryCode = manager.getSimCountryIso();
-      String simOperator = manager.getSimOperator();
-      String carrierName = manager.getSimOperatorName();
-
-      String deviceId = null;
-      String deviceSoftwareVersion = null;
-      String simSerialNumber = null;
-      String subscriberId = null;
-
-      int callState = manager.getCallState();
-      int dataActivity = manager.getDataActivity();
-      int networkType = manager.getNetworkType();
-      int phoneType = manager.getPhoneType();
-      int simState = manager.getSimState();
-
-      boolean isNetworkRoaming = manager.isNetworkRoaming();
-
-      if (simPermissionGranted(Manifest.permission.READ_PHONE_STATE)) {
-        phoneNumber = manager.getLine1Number();
-        deviceId = manager.getDeviceId();
-        deviceSoftwareVersion = manager.getDeviceSoftwareVersion();
-        simSerialNumber = manager.getSimSerialNumber();
-        subscriberId = manager.getSubscriberId();
-      }
-
-      String mcc = "";
-      String mnc = "";
-
-      if (simOperator.length() >= 3) {
-        mcc = simOperator.substring(0, 3);
-        mnc = simOperator.substring(3);
-      }
-
-      JSONObject result = new JSONObject();
-
-      result.put("carrierName", carrierName);
-      result.put("countryCode", countryCode);
-      result.put("mcc", mcc);
-      result.put("mnc", mnc);
-
-      result.put("callState", callState);
-      result.put("dataActivity", dataActivity);
-      result.put("networkType", networkType);
-      result.put("phoneType", phoneType);
-      result.put("simState", simState);
-
-      result.put("isNetworkRoaming", isNetworkRoaming);
-
-      if (phoneCount != null) {
-        result.put("phoneCount", (int)phoneCount);
-      }
-      if (activeSubscriptionInfoCount != null) {
-        result.put("activeSubscriptionInfoCount", (int)activeSubscriptionInfoCount);
-      }
-      if (activeSubscriptionInfoCountMax != null) {
-        result.put("activeSubscriptionInfoCountMax", (int)activeSubscriptionInfoCountMax);
-      }
-
-      if (simPermissionGranted(Manifest.permission.READ_PHONE_STATE)) {
-        result.put("phoneNumber", phoneNumber);
-        result.put("deviceId", deviceId);
-        result.put("deviceSoftwareVersion", deviceSoftwareVersion);
-        result.put("simSerialNumber", simSerialNumber);
-        result.put("subscriberId", subscriberId);
-      }
-
-      if (sims != null && sims.length() != 0) {
-        result.put("cards", sims);
-      }
-
-      callbackContext.success(result);
-
-      return true;
-    } else if (HAS_READ_PERMISSION.equals(action)) {
-      hasReadPermission();
-      return true;
-    } else if (REQUEST_READ_PERMISSION.equals(action)) {
-      requestReadPermission();
-      return true;
-    } else {
+    default:
       return false;
+    }
+
+  }
+
+  private boolean getSimInfo() throws JSONException {
+    Context context = this.cordova.getActivity().getApplicationContext();
+    TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+
+    JSONObject result = new JSONObject();
+
+    setBasicSimInfo(result, manager);
+    trySetPhoneCount(result, manager);
+    trySetSimCards(result, manager, context);
+    trySetSensitiveInfo(result, manager, context);
+    this.callback.success(result);
+    return true;
+  }
+
+  private boolean hasReadPermission() {
+    this.callback.sendPluginResult(new PluginResult(PluginResult.Status.OK, simAllPermissionsGranted()));
+    return true;
+  }
+
+  private boolean requestReadPermission() {
+    requestPermission();
+    return true;
+  }
+
+  private void trySetPhoneCount(JSONObject result, TelephonyManager manager) throws JSONException {
+    // TelephonyManager.getPhoneCount() requires API 23
+    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.M)
+      return;
+
+    result.put("phoneCount", manager.getPhoneCount());
+  }
+
+  // anything that requires READ_PHONE_STATE, READ_PHONE_NUMBERS or other
+  // permissions
+  private void trySetSensitiveInfo(JSONObject result, TelephonyManager manager, Context context) throws JSONException {
+    if (!simAllPermissionsGranted())
+      return;
+
+    result.put("phoneNumber", manager.getLine1Number());
+    result.put("deviceSoftwareVersion", manager.getDeviceSoftwareVersion());
+    result.put("networkType", manager.getNetworkType());
+
+    if (android.os.Build.VERSION.SDK_INT >= ANDROID_VERSION_Q) {
+      result.put("deviceId", Secure.getString(context.getContentResolver(), Secure.ANDROID_ID));
+    } else {
+      result.put("deviceId", manager.getDeviceId());
+    }
+
+    if (android.os.Build.VERSION.SDK_INT < ANDROID_VERSION_Q) {
+      result.put("simSerialNumber", manager.getSimSerialNumber());
+      result.put("subscriberId", manager.getSubscriberId());
     }
   }
 
-  private void hasReadPermission() {
-    this.callback.sendPluginResult(new PluginResult(PluginResult.Status.OK,
-      simPermissionGranted(Manifest.permission.READ_PHONE_STATE)));
+  private void setBasicSimInfo(JSONObject result, TelephonyManager manager) throws JSONException {
+    String simOperator = manager.getSimOperator();
+    if (simOperator.length() >= 3) {
+      result.put("mcc", simOperator.substring(0, 3));
+      result.put("mnc", simOperator.substring(3));
+    }
+    result.put("carrierName", manager.getSimOperatorName());
+    result.put("countryCode", manager.getSimCountryIso());
+    result.put("callState", manager.getCallState());
+    result.put("dataActivity", manager.getDataActivity());
+    result.put("phoneType", manager.getPhoneType());
+    result.put("simState", manager.getSimState());
+    result.put("isNetworkRoaming", manager.isNetworkRoaming());
   }
 
-  private void requestReadPermission() {
-    requestPermission(Manifest.permission.READ_PHONE_STATE);
+  // dual SIM detection with SubscriptionManager API
+  private void trySetSimCards(JSONObject result, TelephonyManager manager, Context context) {
+    try {
+      // requires API 22
+      if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP_MR1)
+        return;
+
+      // requires permission READ_PHONE_STATE
+      if (!simAllPermissionsGranted())
+        return;
+
+      JSONArray sims = new JSONArray();
+
+      SubscriptionManager subscriptionManager = (SubscriptionManager) context
+          .getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
+
+      result.put("activeSubscriptionInfoCount", subscriptionManager.getActiveSubscriptionInfoCount());
+      result.put("activeSubscriptionInfoCountMax", subscriptionManager.getActiveSubscriptionInfoCountMax());
+
+      List<SubscriptionInfo> subscriptionInfos = subscriptionManager.getActiveSubscriptionInfoList();
+      for (SubscriptionInfo subscriptionInfo : subscriptionInfos) {
+
+        JSONObject simData = new JSONObject();
+
+        simData.put("carrierName", subscriptionInfo.getCarrierName().toString());
+        simData.put("displayName", subscriptionInfo.getDisplayName().toString());
+        simData.put("countryCode", subscriptionInfo.getCountryIso());
+        simData.put("mcc", subscriptionInfo.getMcc());
+        simData.put("mnc", subscriptionInfo.getMnc());
+        simData.put("isDataRoaming", (subscriptionInfo.getDataRoaming() == 1));// 1 is enabled ; 0 is disabled
+        simData.put("phoneNumber", subscriptionInfo.getNumber());
+        simData.put("subscriptionId", subscriptionInfo.getSubscriptionId());
+
+        if (android.os.Build.VERSION.SDK_INT < ANDROID_VERSION_Q) {
+          simData.put("simSerialNumber", subscriptionInfo.getIccId());
+        }
+
+        int simSlotIndex = subscriptionInfo.getSimSlotIndex();
+        simData.put("simSlotIndex", simSlotIndex);
+        simData.put("isNetworkRoaming", subscriptionManager.isNetworkRoaming(simSlotIndex));
+
+        // TelephonyManager.getDeviceId(slotId) requires API 23
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M
+            && android.os.Build.VERSION.SDK_INT < ANDROID_VERSION_Q) {
+          simData.put("deviceId", manager.getDeviceId(simSlotIndex));
+        }
+
+        sims.put(simData);
+
+      }
+      if (sims == null || sims.length() == 0)
+        return;
+
+      trySetDefaultSubscriptionId(result);
+      result.put("cards", sims);
+
+    } catch (JSONException e) {
+      e.printStackTrace();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  private void trySetDefaultSubscriptionId(JSONObject result) throws JSONException {
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+      // android.telephony.SubscriptionManager#getDefaultDataSubscriptionId requires
+      // API 24
+      result.put("defaultDataSubscriptionId", SubscriptionManager.getDefaultDataSubscriptionId());
+    } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
+      // android.telephony.SubscriptionManager#getDefaultDataSubId requires API 22,
+      // must be accessed through reflection
+      try {
+        Method getDefaultDataSubId = SubscriptionManager.class.getDeclaredMethod("getDefaultDataSubId");
+        getDefaultDataSubId.setAccessible(true);
+        result.put("defaultDataSubscriptionId", getDefaultDataSubId.invoke(null));
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
   }
 
   private boolean simPermissionGranted(String type) {
@@ -243,18 +242,25 @@ public class Sim extends CordovaPlugin {
     return cordova.hasPermission(type);
   }
 
-  private void requestPermission(String type) {
+  private boolean simAllPermissionsGranted() {
+    for (String permission : this.permissions)
+      if (!simPermissionGranted(permission))
+        return false;
+    return true;
+  }
+
+  private void requestPermission() {
     LOG.i(LOG_TAG, "requestPermission");
-    if (!simPermissionGranted(type)) {
-      cordova.requestPermission(this, 12345, type);
+    if (!simAllPermissionsGranted()) {
+      cordova.requestPermissions(this, 12345, this.permissions);
     } else {
       this.callback.success();
     }
   }
 
   @Override
-  public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException
-  {
+  public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults)
+      throws JSONException {
     if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
       this.callback.success();
     } else {
